@@ -103,6 +103,7 @@ struct CommonOpts {
 }
 
 pub fn run_app(mut args: Vec<String>) -> Result<(), ()> {
+    println!("{:?}", args);
     let mut possible_paths: Vec<String> = Vec::new();
     for i in 0..args.len() {
         if args[i] == "--init-file" {
