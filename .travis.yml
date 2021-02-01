@@ -13,9 +13,14 @@ before_script: |
   if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
     cargo install cargo-tarpaulin
   fi
+  if [[ "$TRAVIS_EVENT_TYPE" == cron ]]; then
+    for TAG in $(git tag | grep -)
+    do
+      git push --delete origin $TAG https://${GITHUB_TOKEN}@github.com/frosklis/dinero-rs.git
+    done
+  fi 
 
 script:
-- cargo clean
 - cargo build
 - cargo test
 
