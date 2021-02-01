@@ -102,7 +102,7 @@ struct CommonOpts {
     unrealized_losses: Option<String>,
 }
 
-pub fn main(mut args: Vec<String>) {
+pub fn run_app(mut args: Vec<String>) -> Result<(), ()> {
     let mut possible_paths: Vec<String> = Vec::new();
     for i in 0..args.len() {
         if args[i] == "--init-file" {
@@ -208,5 +208,7 @@ pub fn main(mut args: Vec<String>) {
         Command::Check { input } => check::execute(input),
     } {
         eprintln!("{}", e);
+        return Err(());
     }
+    Ok(())
 }

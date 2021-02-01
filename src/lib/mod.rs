@@ -8,4 +8,4 @@ pub mod parser;
 
 pub(crate) use error::{Error, LedgerError, ParserError};
 pub use list::List;
-pub use main::main;
+pub use main::run_app;

@@ -1,5 +1,5 @@
 use std::env;
 
 fn main() {
-    dinero::main(env::args().collect())
+    dinero::run_app(env::args().collect());
 }
