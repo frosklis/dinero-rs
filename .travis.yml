@@ -9,9 +9,20 @@ jobs:
     - rust: nightly
   fast_finish: true
 
+addons:
+  apt:
+    packages:
+      - libcurl4-openssl-dev
+      - libelf-dev
+      - libdw-dev
+      - cmake
+      - gcc
+      - binutils-dev
+      - libiberty-dev
+
 before_script: |
   if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
-    cargo install cargo-tarpaulin
+    # cargo install cargo-tarpaulin
   fi
   if [[ "$TRAVIS_EVENT_TYPE" == cron ]]; then
     for TAG in $(git tag | grep -)
@@ -25,8 +36,21 @@ script:
 - cargo test
 after_success: |
   if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
-    cargo tarpaulin --out Xml
+    # cargo tarpaulin --out Xml
+    wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
+    tar xzf master.tar.gz &&
+    cd kcov-master &&
+    mkdir build &&
+    cd build &&
+    cmake .. &&
+    make &&
+    make install DESTDIR=../../kcov-build &&
+    cd ../.. &&
+    rm -rf kcov-master &&
+    for file in target/debug/examplerust-*; do [ -x "${file}" ] || continue; mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
+    
     bash <(curl -s https://codecov.io/bash)
+    echo "Uploaded code coverage"
     # If this build is not from a tag, create one
     if [[ "$TRAVIS_TAG" == "" ]]; then
       # Build a tag
